@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -MMD
+CFLAGS = -Wall -Wextra -MMD -Iinclude
 SRCS = $(wildcard src/*.c) $(wildcard policies/*.c)
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
@@ -17,3 +17,6 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(DEPS) $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
