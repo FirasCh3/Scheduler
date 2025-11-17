@@ -29,4 +29,6 @@ void init_process(Process* p, const char* name, int arrival, int burst, int prio
 
 int all_finished(ProcessList* plist);
 
+void update_ready_processes(ProcessList* plist, int current_time);
+
 #endif
