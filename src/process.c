@@ -28,3 +28,18 @@ void update_ready_processes(ProcessList* plist, int current_time) {
         }
     }
 }
+
+void run_process_for_one_unit(Process* p, int current_time) {
+    if (p->state != RUNNING)
+        p->start_time = (p->start_time == -1) ? current_time : p->start_time;
+
+    p->state = RUNNING;
+    p->remaining_time--;
+
+    if (p->remaining_time == 0) {
+        p->state = FINISHED;
+        p->finish_time = current_time + 1;
+    } else {
+        p->state = READY;
+    }
+}
