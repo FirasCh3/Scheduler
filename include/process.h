@@ -27,4 +27,6 @@ typedef struct {
 
 void init_process(Process* p, const char* name, int arrival, int burst, int priority);
 
+int all_finished(ProcessList* plist);
+
 #endif

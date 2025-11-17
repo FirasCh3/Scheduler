@@ -11,3 +11,11 @@ void init_process(Process* p, const char* name, int arrival, int burst, int prio
     p->start_time = -1;
     p->finish_time = -1;
 }
+
+int all_finished(ProcessList* plist) {
+    for (int i = 0; i < plist->count; i++) {
+        if (plist->list[i].state != FINISHED)
+            return 0;
+    }
+    return 1;
+}
