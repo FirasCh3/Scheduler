@@ -25,4 +25,6 @@ typedef struct {
     int count;
 } ProcessList;
 
+void init_process(Process* p, const char* name, int arrival, int burst, int priority);
+
 #endif
