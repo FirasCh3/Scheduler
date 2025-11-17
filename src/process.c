@@ -19,3 +19,12 @@ int all_finished(ProcessList* plist) {
     }
     return 1;
 }
+
+void update_ready_processes(ProcessList* plist, int current_time) {
+    for (int i = 0; i < plist->count; i++) {
+        Process* p = &plist->list[i];
+        if (p->state == NEW && p->arrival_time == current_time) {
+            p->state = READY;
+        }
+    }
+}
