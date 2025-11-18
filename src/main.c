@@ -3,9 +3,9 @@
 #include <string.h>
 #include "process.h"
 #include "scheduler.h"
-
+#include "parser.h"
 int main(void) {
-    ProcessList plist;
+    /*ProcessList plist;
 
     // this will be replaced by input parsed from config
     plist.count = 3;
@@ -35,6 +35,7 @@ int main(void) {
     }
 
 
-    free(plist.list);
+    free(plist.list);*/
+    parse_file("config/processes.txt");
     return 0;
 }
