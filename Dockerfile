@@ -1,3 +1,4 @@
-FROM gcc:latest
+FROM alpine:latest
+RUN apk add --no-cache build-base
 COPY . .
-RUN makefile run
+RUN make run
