@@ -31,4 +31,6 @@ int all_finished(ProcessList* plist);
 
 void update_ready_processes(ProcessList* plist, int current_time);
 
+void run_process_for_one_unit(Process* p, int current_time);
+
 #endif
