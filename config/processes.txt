@@ -1,6 +1,6 @@
 # name arrival burst priority
   P1              0 3 2
-P2 7 1 15
+P2 4 2 15
 
 # comments and blank lines allowed
 P3 1 2 30
