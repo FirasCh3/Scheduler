@@ -13,7 +13,7 @@ int main(void) {
            plist.list[i].burst_time, plist.list[i].priority);
   }
 
-  const char *policy_name = "fifo";
+  const char *policy_name = "preemptive_priority";
 
   ProcessList execution_stack = scheduler(plist, policy_name);
   for (int i = 0; i < execution_stack.count; i++) {
