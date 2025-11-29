@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <raylib.h>
+#define RAYGUI_IMPLEMENTATION
+#include <raygui.h>
+#include <genesis/style_genesis.h>
 
 int main(void) {
   ProcessList plist;
@@ -20,6 +24,19 @@ int main(void) {
     printf("%s\n", execution_stack.list[i].name);
   }
   free(plist.list);
+
+	InitWindow(312, 312, "Scheduler");
+	SetTargetFPS(60);
+	GuiLoadStyleGenesis();
+	while (!WindowShouldClose())
+	{
+		BeginDrawing();
+		ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+		GuiLabel((Rectangle){24, 24, 124, 24}, "Nice! It's working");
+		EndDrawing();
+	}
+
+	CloseWindow();
 
   return 0;
 }
