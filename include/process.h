@@ -11,13 +11,16 @@ typedef enum {
 typedef struct {
     char name[32];
     int arrival_time;
-    int burst_time;
+    int burst_time; // execution time
     int remaining_time;
     int priority;
 
     ProcessState state;
     int start_time;
     int finish_time;
+
+		// Round-Robin specific fields
+		int qtime_left; //time left in quantum
 } Process;
 
 typedef struct {
