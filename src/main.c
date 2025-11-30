@@ -15,11 +15,16 @@
 typedef struct {
 	bool quit;
 	bool result;
+	bool generated;
 	int selected_policy;
 	int padding;
-
 	int quantum;
 	bool quantum_edit;
+	Vector2 panel_scroll;
+	Rectangle view_rect;
+
+	float avg_rot;
+	Texture timeline;
 } UiState;
 
 #define MIN_SIZE 24
@@ -74,6 +79,62 @@ int draw_ps_group(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
+int draw_timeline_group(UiState *state, Rectangle pos) {
+	Rectangle scroll_rect = {
+		pos.x,
+		pos.y,
+		pos.width,
+		fmin(state->timeline.height, MIN_SIZE * 10),
+	};
+	GuiScrollPanel(scroll_rect, "Timeline", (Rectangle){
+		0, 0,
+		state->timeline.width,
+		state->timeline.height,
+	}, &(state->panel_scroll), &(state->view_rect));
+	BeginScissorMode(state->view_rect.x, state->view_rect.y, state->view_rect.width, state->view_rect.height);
+	DrawTexturePro(state->timeline, (Rectangle) {
+			-state->panel_scroll.x,
+			-state->panel_scroll.y,
+			state->view_rect.width,
+			state->view_rect.height,
+	}, state->view_rect, (Vector2){0, 0}, 0, WHITE);
+	EndScissorMode();
+	if (pos.height == 0) pos.height = scroll_rect.height;
+	return pos.height;
+}
+
+int draw_stats_group(UiState *state, Rectangle pos) {
+	int y_increment = state->padding;
+	Rectangle rot_rect = {
+		pos.x + state->padding,
+		pos.y + y_increment,
+		pos.width - state->padding * 2,
+		MIN_SIZE,
+	};
+	y_increment += state->padding + rot_rect.height;
+	GuiLabel(rot_rect, TextFormat("Avg. Rotation time: %f", state->avg_rot));
+	if (pos.height == 0) pos.height = y_increment;
+	GuiGroupBox(pos, "Stats");
+	return pos.height;
+}
+
+// This function will generate a texture of the gantt diagram
+// TODO: Impelement correct rendering
+Texture generate_timeline(ProcessList exec_stack) {
+	RenderTexture timeline = LoadRenderTexture(1280, 720);
+	BeginTextureMode(timeline);
+	ClearBackground(SKYBLUE);
+	DrawRectangle(MIN_SIZE, timeline.texture.height - MIN_SIZE * 2, 50, MIN_SIZE, GREEN);
+	GuiGrid((Rectangle){
+		MIN_SIZE,
+		timeline.texture.height - MIN_SIZE * 2,
+		10 * MIN_SIZE * 2,
+		MIN_SIZE,
+	}, NULL, MIN_SIZE, 1, NULL);
+	EndTextureMode();
+	return timeline.texture;
+}
+
 int draw_buttons(UiState *state, Rectangle pos) {
 	int x_increment = state->padding;
 	Rectangle close_rect = {
@@ -90,7 +151,10 @@ int draw_buttons(UiState *state, Rectangle pos) {
 		pos.height - state->padding * 2,
 	};
 	if (GuiButton(close_rect, "Close")) state->quit = true;
-	if (GuiButton(gen_rect, "Generate")) state->result = true;
+	if (GuiButton(gen_rect, "Generate")) {
+		state->generated = false;
+		state->result = true;
+	}
 	return 0;
 }
 
@@ -112,7 +176,7 @@ int main(void) {
 
 	// GUI Related Variables
 	int screen_width = 312;
-	int screen_height = 312;
+	int screen_height = 312 * 1.5;
 	UiState state = {.padding = MIN_SIZE / 2};
 	Rectangle main_anchor = {0, 0, screen_width, screen_height};
 
@@ -120,6 +184,7 @@ int main(void) {
 	InitWindow(screen_width, screen_height, "Scheduler");
 	SetTargetFPS(60);
 	GuiLoadStyleGenesis();
+	GuiSetStyle(DEFAULT, TEXT_SIZE, 16);
 
 	while (!state.quit)
 	{
@@ -161,12 +226,32 @@ int main(void) {
 		draw_buttons(&state, buttons_rect);
 
 		if (state.result) {
-			state.result = !GuiWindowBox((Rectangle){
-					main_anchor.x,
-					main_anchor.y,
-					main_anchor.width / 2,
-					main_anchor.height / 2,
-			}, "Scheduler Results");
+			// TODO: Add button for saving the texture as an image
+			if (!state.generated) {
+				state.timeline = generate_timeline(execution_stack);
+				state.generated = true;
+			}
+			Rectangle sub_anchor = {
+				main_anchor.x,
+				main_anchor.y + 32,
+				main_anchor.width,
+				main_anchor.height,
+			};
+			state.result = !GuiWindowBox(main_anchor, "Scheduler Results");
+
+			int y_increment = state.padding;
+			Rectangle timeline_group_rect = {
+				sub_anchor.x + state.padding,
+				sub_anchor.y + y_increment,
+				sub_anchor.width - state.padding * 2,
+			};
+			y_increment += state.padding + draw_timeline_group(&state, timeline_group_rect);
+			Rectangle stats_group_rect = {
+				sub_anchor.x + state.padding,
+				sub_anchor.y + y_increment,
+				sub_anchor.width - state.padding * 2,
+			};
+			y_increment += state.padding + draw_stats_group(&state, stats_group_rect);
 		}
 		EndDrawing();
 	}
