@@ -10,6 +10,7 @@ void init_process(Process* p, const char* name, int arrival, int burst, int prio
     p->state = NEW;
     p->start_time = -1;
     p->finish_time = -1;
+    p->in_queue = 0;
 }
 
 int all_finished(ProcessList* plist) {
