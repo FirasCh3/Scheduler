@@ -13,13 +13,13 @@ Texture generate_timeline(ProcessList exec_stack) {
 	RenderTexture timeline = LoadRenderTexture(1280, 720);
 	BeginTextureMode(timeline);
 	ClearBackground(SKYBLUE);
-	DrawRectangle(MIN_SIZE, timeline.texture.height - MIN_SIZE * 2, 50, MIN_SIZE, GREEN);
 	GuiGrid((Rectangle){
 		MIN_SIZE,
 		timeline.texture.height - MIN_SIZE * 2,
 		10 * MIN_SIZE * 2,
-		MIN_SIZE,
-	}, NULL, MIN_SIZE, 1, NULL);
+		MIN_SIZE * 2,
+	}, NULL, MIN_SIZE * 2, 1, NULL);
+	DrawRectangle(MIN_SIZE, timeline.texture.height - MIN_SIZE * 2, 50, MIN_SIZE * 2, GREEN);
 	EndTextureMode();
 	return timeline.texture;
 }
@@ -41,8 +41,8 @@ int main(void) {
   }
 
 	// GUI Related Variables
-	int screen_width = 312;
-	int screen_height = 312 * 1.5;
+	int screen_width = 312 * 2;
+	int screen_height = 312 * 2;
 	UiState state = {.padding = MIN_SIZE / 2, .file_path = file_path};
 	Rectangle main_anchor = {0, 0, screen_width, screen_height};
 
@@ -50,7 +50,7 @@ int main(void) {
 	InitWindow(screen_width, screen_height, "Scheduler");
 	SetTargetFPS(60);
 	GuiLoadStyleGenesis();
-	GuiSetStyle(DEFAULT, TEXT_SIZE, 16);
+	GuiSetStyle(DEFAULT, TEXT_SIZE, FONT_SIZE);
 
 	while (!state.quit)
 	{

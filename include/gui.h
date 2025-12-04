@@ -28,6 +28,7 @@ typedef struct {
 
 // size used for relative values
 #define MIN_SIZE 24
+#define FONT_SIZE 16
 
 // These functions renders each of the components
 // of the UI. Each of the functions return the height
@@ -62,7 +63,25 @@ int draw_psp_group(UiState *state, Rectangle pos) {
 			};
 			y_increment += value_rect.height + state->padding;
 			GuiLabel(label_rect, "Quantum");
-			if (GuiValueBox(value_rect, NULL, &(state->quantum), 0, INT_MAX, state->quantum_edit)) state->quantum_edit = !state->quantum_edit;
+			if (GuiValueBox(
+				value_rect,
+				NULL,
+				&(state->quantum),
+				0,
+				INT_MAX,
+				state->quantum_edit
+			)) state->quantum_edit = !state->quantum_edit;
+			break;
+		default:
+			// Draws empty space if there is no options to render
+			Rectangle space_rect = {
+				pos.x + state->padding,
+				pos.y + y_increment,
+				pos.width - state->padding * 2,
+				MIN_SIZE,
+			};
+			y_increment += space_rect.height + state->padding;
+			GuiLabel(space_rect, NULL);
 			break;
 	}
 	if (pos.height == 0) pos.height = y_increment;
