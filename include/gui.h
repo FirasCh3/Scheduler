@@ -30,7 +30,7 @@ typedef struct {
 #define MIN_SIZE 24
 #define FONT_SIZE 16
 
-// These functions renders each of the components
+// These functions render each of the components
 // of the UI. Each of the functions return the height
 // of the component to use in other components
 int draw_psp_group(UiState *state, Rectangle pos);
@@ -40,6 +40,11 @@ int draw_stats_group(UiState *state, Rectangle pos);
 int draw_buttons(UiState *state, Rectangle pos);
 int draw_main_window(UiState *state, Rectangle pos);
 int draw_sub_window(UiState *state, Rectangle pos);
+
+// These functions are responsible for the timeline
+// rendering
+void draw_process(Rectangle rect, const char *name, bool exited);
+Texture generate_timeline(ProcessList exec_stack);
 
 #ifdef GUI_IMPLEMENTATION
 
@@ -115,11 +120,12 @@ int draw_ps_group(UiState *state, Rectangle pos) {
 
 // Draws the timeline in a scrollable panel
 int draw_timeline_group(UiState *state, Rectangle pos) {
+	const float header_height = RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT + 2;
 	Rectangle scroll_rect = {
 		pos.x,
 		pos.y,
 		pos.width,
-		fmin(state->timeline.height, MIN_SIZE * 10),
+		state->timeline.height + header_height,
 	};
 	GuiScrollPanel(scroll_rect, "Timeline", (Rectangle){
 		0, 0,
@@ -127,11 +133,13 @@ int draw_timeline_group(UiState *state, Rectangle pos) {
 		state->timeline.height,
 	}, &(state->panel_scroll), &(state->view_rect));
 	BeginScissorMode(state->view_rect.x, state->view_rect.y, state->view_rect.width, state->view_rect.height);
+	// Texture is y-flipped since Texture mode y-axis
+	// is flipped compared to the usual Drawing mode
 	DrawTexturePro(state->timeline, (Rectangle) {
 			-state->panel_scroll.x,
 			-state->panel_scroll.y,
 			state->view_rect.width,
-			state->view_rect.height,
+			-state->view_rect.height,
 	}, state->view_rect, (Vector2){0, 0}, 0, WHITE);
 	EndScissorMode();
 	if (pos.height == 0) pos.height = scroll_rect.height;
@@ -241,6 +249,52 @@ int draw_sub_window(UiState *state, Rectangle pos) {
 	y_increment += state->padding + draw_stats_group(state, stats_group_rect);
 	pos.height = y_increment + state->padding;
 	return pos.height;
+}
+
+void draw_process(Rectangle rect, const char *name, bool exited) {
+	Color normal_color = GetColor(GuiGetStyle(DEFAULT, BASE_COLOR_NORMAL));
+	Color exit_color = GetColor(GuiGetStyle(DEFAULT, BASE_COLOR_PRESSED));
+	Color text_color = GetColor(GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL));
+	if (exited) DrawRectangleRec(rect, exit_color);
+	else DrawRectangleRec(rect, normal_color);
+	GuiDrawText(name, rect, TEXT_ALIGN_CENTER, text_color);
+}
+
+// This function will generate a texture of the gantt diagram
+Texture generate_timeline(ProcessList exec_stack) {
+	const int prev_color = GuiGetStyle(DEFAULT, LINE_COLOR);
+	const int text_color = GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL);
+	const int bg_color = GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL);
+	GuiSetStyle(DEFAULT, LINE_COLOR, text_color);
+
+	// Calculate texture dimensions
+	const float block_size = MIN_SIZE * 2;
+	const int padding = MIN_SIZE;
+	const float width = exec_stack.count * block_size + padding * 2;
+	const float height = block_size + padding * 2;
+
+	RenderTexture timeline = LoadRenderTexture(width, height);
+	BeginTextureMode(timeline);
+	ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+
+	for (int i = 0; i < exec_stack.count; i++) {
+		Process p = exec_stack.list[i];
+		draw_process((Rectangle){
+			padding + block_size * i,
+			padding,
+			block_size,
+			block_size,
+		}, p.name, (bool) p.remaining_time <= 0);
+	}
+	GuiGrid((Rectangle){
+		padding,
+		padding,
+		exec_stack.count * block_size,
+		block_size,
+	}, NULL, block_size, 1, NULL);
+	EndTextureMode();
+	GuiSetStyle(DEFAULT, LINE_COLOR, prev_color);
+	return timeline.texture;
 }
 
 #endif // GUI_IMPLEMENTATION

@@ -7,23 +7,6 @@
 #define GUI_IMPLEMENTATION
 #include <gui.h>
 
-// This function will generate a texture of the gantt diagram
-// TODO: Impelement correct rendering
-Texture generate_timeline(ProcessList exec_stack) {
-	RenderTexture timeline = LoadRenderTexture(1280, 720);
-	BeginTextureMode(timeline);
-	ClearBackground(SKYBLUE);
-	GuiGrid((Rectangle){
-		MIN_SIZE,
-		timeline.texture.height - MIN_SIZE * 2,
-		10 * MIN_SIZE * 2,
-		MIN_SIZE * 2,
-	}, NULL, MIN_SIZE * 2, 1, NULL);
-	DrawRectangle(MIN_SIZE, timeline.texture.height - MIN_SIZE * 2, 50, MIN_SIZE * 2, GREEN);
-	EndTextureMode();
-	return timeline.texture;
-}
-
 int main(void) {
   ProcessList plist;
 	char *file_path = "./config/processes.txt";
@@ -72,6 +55,7 @@ int main(void) {
 	}
 
 	// GUI Cleanup
+	UnloadTexture(state.timeline);
 	CloseWindow();
   free(plist.list);
   return 0;
