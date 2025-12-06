@@ -22,6 +22,8 @@ typedef struct {
 	int quantum;
 	bool quantum_edit;
 	Vector2 panel_scroll;
+	int scroll_index;
+	int list_selected;
 	Rectangle view_rect;
 	GuiWindowFileDialogState file_dialog_state;
 
@@ -53,7 +55,68 @@ Texture generate_timeline(ProcessList exec_stack);
 UiState init_state() {
 	return (UiState) {
 		.file_dialog_state = InitGuiWindowFileDialog(GetWorkingDirectory()),
+		.list_selected = -1,
 	};
+}
+
+// Draws the Policy Viewer group box
+static int draw_pv_group(UiState *state, Rectangle pos) {
+	// Construct semicolon separated string of names
+	char *elems;
+	for (int i=0; i < state->plist.count; i++) {
+		if (i > 0) elems = TextFormat("%s;%s", elems, state->plist.list[i].name);
+		else elems = TextFormat("%s", state->plist.list[i].name);
+	}
+
+	float y_increment = state->padding;
+	float x_increment = state->padding;
+	Rectangle list_rect = {
+		pos.x + x_increment,
+		pos.y + y_increment,
+		(pos.width - state->padding * 2) * 0.3,
+		MIN_SIZE * 6,
+	};
+	x_increment += list_rect.width + state->padding;
+
+	Rectangle label_rect = {
+		pos.x + x_increment,
+		pos.y + y_increment,
+		(pos.width - state->padding * 2) * 0.3,
+		MIN_SIZE,
+	};
+	y_increment += label_rect.height + state->padding;
+
+	Rectangle label2_rect = {
+		pos.x + x_increment,
+		pos.y + y_increment,
+		(pos.width - state->padding * 2) * 0.3,
+		MIN_SIZE,
+	};
+	y_increment += label2_rect.height + state->padding;
+
+	Rectangle label3_rect = {
+		pos.x + x_increment,
+		pos.y + y_increment,
+		(pos.width - state->padding * 2) * 0.3,
+		MIN_SIZE,
+	};
+	y_increment += label3_rect.height + state->padding;
+
+	x_increment += label_rect.width + state->padding;
+	y_increment = fmax(
+		list_rect.height + state->padding * 2,
+		y_increment
+	);
+
+	GuiListView(list_rect, elems, &(state->scroll_index), &(state->list_selected));
+	if (state->list_selected >= 0) {
+		GuiLabel(label_rect, TextFormat("Arrival: %d", state->plist.list[state->list_selected].arrival_time));
+		GuiLabel(label2_rect, TextFormat("Burst: %d", state->plist.list[state->list_selected].burst_time));
+		GuiLabel(label3_rect, TextFormat("Priority: %d", state->plist.list[state->list_selected].priority));
+	}
+	if (pos.height == 0) pos.height = y_increment;
+	GuiGroupBox(pos, "Process Viewer");
+	return pos.height;
 }
 
 // Draws the Policy Specific Params group box
@@ -262,6 +325,14 @@ int draw_main_window(UiState *state, Rectangle pos) {
 	};
 	psp_group_rect.height += draw_psp_group(state, psp_group_rect);
 	y_increment += state->padding + psp_group_rect.height;
+
+	Rectangle pv_group_rect = {
+		pos.x + state->padding,
+		pos.y + y_increment,
+		pos.width - state->padding * 2,
+	};
+	pv_group_rect.height += draw_pv_group(state, pv_group_rect);
+	y_increment += state->padding + pv_group_rect.height;
 
 	Rectangle buttons_rect = {
 		.x = pos.x + state->padding,
