@@ -7,6 +7,9 @@
 #include <genesis/style_genesis.h>
 #include <stddef.h>
 #include <limits.h>
+#undef RAYGUI_IMPLEMENTATION
+#define GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION
+#include <custom_file_dialog/gui_window_file_dialog.h>
 
 // struct for managing ui related vars
 // and storing persistent data
@@ -20,19 +23,28 @@ typedef struct {
 	bool quantum_edit;
 	Vector2 panel_scroll;
 	Rectangle view_rect;
+	GuiWindowFileDialogState file_dialog_state;
 
+	ProcessList plist;
+	ProcessList exec_stack;
 	float avg_rot;
 	Texture timeline;
-	char *file_path;
+	char file_path[512]; // changed type to ensure max length
 } UiState;
+
+// TODO: Convert increment values types to float since they work with floats
+// TODO: Remove unexported funcs definitions and mark them as static to not
+// clutter global namespace
 
 // size used for relative values
 #define MIN_SIZE 24
 #define FONT_SIZE 16
 
+UiState init_state();
 // These functions render each of the components
 // of the UI. Each of the functions return the height
 // of the component to use in other components
+int draw_file_group(UiState *state, Rectangle pos);
 int draw_psp_group(UiState *state, Rectangle pos);
 int draw_ps_group(UiState *state, Rectangle pos);
 int draw_timeline_group(UiState *state, Rectangle pos);
@@ -47,6 +59,12 @@ void draw_process(Rectangle rect, const char *name, bool exited);
 Texture generate_timeline(ProcessList exec_stack);
 
 #ifdef GUI_IMPLEMENTATION
+
+UiState init_state() {
+	return (UiState) {
+		.file_dialog_state = InitGuiWindowFileDialog(GetWorkingDirectory()),
+	};
+}
 
 // Draws the Policy Specific Params group box
 int draw_psp_group(UiState *state, Rectangle pos) {
@@ -90,7 +108,7 @@ int draw_psp_group(UiState *state, Rectangle pos) {
 			break;
 	}
 	if (pos.height == 0) pos.height = y_increment;
-	GuiGroupBox(pos, "Policy Specifi Params");
+	GuiGroupBox(pos, "Policy Specific Params");
 	return pos.height;
 }
 
@@ -186,25 +204,67 @@ int draw_buttons(UiState *state, Rectangle pos) {
 	return 0;
 }
 
-// Draws the main window
-int draw_main_window(UiState *state, Rectangle pos) {
+int draw_file_group(UiState *state, Rectangle pos) {
 	int y_increment = state->padding;
+	int x_increment = state->padding;
+	const char *button_text = "Select File";
+	float button_width = fmax(
+		MIN_SIZE * 5,
+		MeasureText(button_text, GuiGetStyle(DEFAULT, TEXT_SIZE))
+	);
+
 	Rectangle label_rect = {
+		pos.x + x_increment,
+		pos.y + y_increment,
+		pos.width - state->padding * 3 - button_width,
+		MIN_SIZE,
+	};
+	x_increment += label_rect.width + state->padding;
+
+	Rectangle button_rect = {
+		pos.x + x_increment,
+		pos.y + y_increment,
+		button_width,
+		MIN_SIZE,
+	};
+	y_increment += label_rect.height + state->padding;
+
+	Rectangle label2_rect = {
 		pos.x + state->padding,
 		pos.y + y_increment,
 		pos.width - state->padding * 2,
 		MIN_SIZE,
 	};
-	y_increment += label_rect.height + state->padding;
+	y_increment += label2_rect.height + state->padding;
+
+	GuiLabel(label_rect, TextFormat("File selected: %s", state->file_path));
+	if (GuiButton(button_rect, button_text)) state->file_dialog_state.windowActive = true;
+	GuiLabel(label2_rect, TextFormat("Loaded %d processes", state->plist.count));
+	if (pos.height == 0) pos.height = y_increment;
+	GuiGroupBox(pos, "File Picker");
+	return y_increment;
+}
+
+// Draws the main window
+int draw_main_window(UiState *state, Rectangle pos) {
+	int y_increment = state->padding;
+
+	Rectangle file_group_rect = {
+		pos.x + state->padding,
+		pos.y + y_increment,
+		pos.width - state->padding * 2,
+	};
+	file_group_rect.height = draw_file_group(state, file_group_rect);
+	y_increment += file_group_rect.height + state->padding;
+
 	Rectangle ps_group_rect = {
 		pos.x + state->padding,
 		pos.y + y_increment,
 		pos.width - state->padding * 2,
 	};
-	GuiLabel(label_rect, TextFormat("File selected: %s", state->file_path));
 	ps_group_rect.height = draw_ps_group(state, ps_group_rect);
-
 	y_increment += state->padding + ps_group_rect.height;
+
 	Rectangle psp_group_rect = {
 		pos.x + state->padding,
 		pos.y + y_increment,
@@ -221,6 +281,7 @@ int draw_main_window(UiState *state, Rectangle pos) {
 	buttons_rect.y = pos.height - state->padding - buttons_rect.height;
 	draw_buttons(state, buttons_rect);
 	y_increment += state->padding + buttons_rect.height;
+
 	pos.height = y_increment + state->padding;
 	return pos.height;
 }

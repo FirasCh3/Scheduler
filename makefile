@@ -6,7 +6,7 @@ DEPS = $(SRCS:.c=.d)
 RAYLIB_DIR = ./libs/raylib
 RAYGUI_DIR = ./libs/raygui
 RAYLIB_TARGET = $(RAYLIB_DIR)/src/libraylib.a
-CFLAGS += -I$(RAYLIB_DIR)/src -I$(RAYGUI_DIR)/src -I$(RAYGUI_DIR)/styles -L$(RAYLIB_DIR)/src -lm
+CFLAGS += -I$(RAYLIB_DIR)/src -I$(RAYGUI_DIR)/src -I$(RAYGUI_DIR)/styles -I$(RAYGUI_DIR)/examples -L$(RAYLIB_DIR)/src -lm
 TARGET = bin/scheduler
 
 all: $(TARGET)
