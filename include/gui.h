@@ -10,6 +10,7 @@
 #undef RAYGUI_IMPLEMENTATION
 #define GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION
 #include <custom_file_dialog/gui_window_file_dialog.h>
+#include <scheduler.h>
 
 // struct for managing ui related vars
 // and storing persistent data
@@ -183,7 +184,11 @@ static float draw_ps_group(UiState *state, Rectangle pos) {
 	};
 	y_increment += combobox_rect.height + state->padding;
 	GuiLabel(label_rect, "Choose policy");
-	GuiComboBox(combobox_rect, "FIFO;Round-Robin;Preemptive Priority", &(state->selected_policy));
+	GuiComboBox(combobox_rect, TextJoin(
+		supported_policies,
+		sp_length,
+		";"
+	), &(state->selected_policy));
 	if (pos.height == 0) pos.height = y_increment;
 	GuiGroupBox(pos, "Policy Selector");
 	return pos.height;
