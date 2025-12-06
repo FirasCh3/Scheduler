@@ -12,13 +12,13 @@ $ git clone --recurse-submodules git@github.com:FirasCh3/Scheduler.git
 
 After having cloned the reop successfully, all you need to do is run
 ```console
-make -j$(nproc)
+$ make -j$(nproc)
 ```
 This will build the executable that can be found in `bin/`.
 
 The leftover files can be removed using
 ```console
-make clean
+$ make clean
 ```
 
 ## Config file
