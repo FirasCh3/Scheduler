@@ -17,8 +17,6 @@ void Usage(char *prg) {
 int main(int argc, char **argv) {
 	if (argc < 2) Usage(argv[0]);
 
-  const char *policy_name = "preemptive_priority";
-
 	// GUI Related Variables
 	Args args = parse_args(argc, argv);
 
@@ -30,7 +28,6 @@ int main(int argc, char **argv) {
 		strcpy(state.file_path, args.file_path);
 		state.plist = parse_file(state.file_path);
 	}
-  state.exec_stack = scheduler(state.plist, policy_name);
 	state.padding = MIN_SIZE / 2;
 	state.file_dialog_state.windowBounds = main_anchor;
 
@@ -60,6 +57,16 @@ int main(int argc, char **argv) {
 		draw_main_window(&state, main_anchor);
 		if (state.result) {
 			if (!state.generated) {
+				if (state.exec_stack.list != NULL) {
+					free(state.exec_stack.list);
+				}
+				state.exec_stack = scheduler(
+					state.plist,
+					supported_policies[state.selected_policy],
+					(Params) {
+						.quantum = state.quantum
+					}
+				);
 				state.timeline = generate_timeline(state.exec_stack);
 				state.generated = true;
 			}
