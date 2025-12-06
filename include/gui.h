@@ -18,7 +18,7 @@ typedef struct {
 	bool result;
 	bool generated;
 	int selected_policy;
-	int padding;
+	float padding;
 	int quantum;
 	bool quantum_edit;
 	Vector2 panel_scroll;
@@ -43,8 +43,8 @@ UiState init_state();
 // These functions render each of the components of the UI.
 // Each of the functions return the height of the component to use in other
 // components
-int draw_main_window(UiState *state, Rectangle pos);
-int draw_sub_window(UiState *state, Rectangle pos);
+float draw_main_window(UiState *state, Rectangle pos);
+float draw_sub_window(UiState *state, Rectangle pos);
 
 // This function is responsible for the timeline
 // rendering
@@ -60,7 +60,7 @@ UiState init_state() {
 }
 
 // Draws the Policy Viewer group box
-static int draw_pv_group(UiState *state, Rectangle pos) {
+static float draw_pv_group(UiState *state, Rectangle pos) {
 	// Construct semicolon separated string of names
 	char *elems;
 	for (int i=0; i < state->plist.count; i++) {
@@ -120,7 +120,7 @@ static int draw_pv_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the Policy Specific Params group box
-static int draw_psp_group(UiState *state, Rectangle pos) {
+static float draw_psp_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	switch (state->selected_policy) {
 		case 1:
@@ -166,7 +166,7 @@ static int draw_psp_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the Policy Selector group box
-static int draw_ps_group(UiState *state, Rectangle pos) {
+static float draw_ps_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	Rectangle label_rect = {
 		pos.x + state->padding,
@@ -190,7 +190,7 @@ static int draw_ps_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the timeline in a scrollable panel
-static int draw_timeline_group(UiState *state, Rectangle pos) {
+static float draw_timeline_group(UiState *state, Rectangle pos) {
 	const float header_height = RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT + 2;
 	Rectangle scroll_rect = {
 		pos.x,
@@ -218,7 +218,7 @@ static int draw_timeline_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the stats for generated timeline (avg. rotation time, etc...)
-static int draw_stats_group(UiState *state, Rectangle pos) {
+static float draw_stats_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	Rectangle rot_rect = {
 		pos.x + state->padding,
@@ -234,7 +234,7 @@ static int draw_stats_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the generate and close buttons
-static int draw_buttons(UiState *state, Rectangle pos) {
+static float draw_buttons(UiState *state, Rectangle pos) {
 	float x_increment = state->padding;
 	Rectangle close_rect = {
 		pos.x + x_increment,
@@ -257,7 +257,7 @@ static int draw_buttons(UiState *state, Rectangle pos) {
 	return 0;
 }
 
-static int draw_file_group(UiState *state, Rectangle pos) {
+static float draw_file_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	float x_increment = state->padding;
 	const char *button_text = "Select File";
@@ -299,7 +299,7 @@ static int draw_file_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the main window
-int draw_main_window(UiState *state, Rectangle pos) {
+float draw_main_window(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 
 	Rectangle file_group_rect = {
@@ -348,7 +348,7 @@ int draw_main_window(UiState *state, Rectangle pos) {
 }
 
 // Draws the results window
-int draw_sub_window(UiState *state, Rectangle pos) {
+float draw_sub_window(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	Rectangle sub_anchor = {
 		pos.x,
