@@ -13,6 +13,7 @@ int main(void) {
   const char *policy_name = "preemptive_priority";
 
 	// GUI Related Variables
+	const char *accepted_filetypes = ".txt"; // Accepted Filetypes (semicolon separated)
 	int screen_width = 312 * 3;
 	int screen_height = 312 * 2;
 	char *file_path = "./config/processes.txt";
@@ -38,7 +39,7 @@ int main(void) {
 		ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 		if (state.file_dialog_state.windowActive) GuiLock();
 		if (state.file_dialog_state.SelectFilePressed) {
-			if (IsFileExtension(state.file_dialog_state.fileNameText, ".txt")) {
+			if (IsFileExtension(state.file_dialog_state.fileNameText, accepted_filetypes)) {
 				strcpy(state.file_path, TextFormat(
 					"%s" PATH_SEPERATOR "%s",
 					state.file_dialog_state.dirPathText,

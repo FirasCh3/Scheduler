@@ -32,30 +32,20 @@ typedef struct {
 	char file_path[512]; // changed type to ensure max length
 } UiState;
 
-// TODO: Convert increment values types to float since they work with floats
-// TODO: Remove unexported funcs definitions and mark them as static to not
-// clutter global namespace
-
 // size used for relative values
 #define MIN_SIZE 24
 #define FONT_SIZE 16
 
 UiState init_state();
-// These functions render each of the components
-// of the UI. Each of the functions return the height
-// of the component to use in other components
-int draw_file_group(UiState *state, Rectangle pos);
-int draw_psp_group(UiState *state, Rectangle pos);
-int draw_ps_group(UiState *state, Rectangle pos);
-int draw_timeline_group(UiState *state, Rectangle pos);
-int draw_stats_group(UiState *state, Rectangle pos);
-int draw_buttons(UiState *state, Rectangle pos);
+
+// These functions render each of the components of the UI.
+// Each of the functions return the height of the component to use in other
+// components
 int draw_main_window(UiState *state, Rectangle pos);
 int draw_sub_window(UiState *state, Rectangle pos);
 
-// These functions are responsible for the timeline
+// This function is responsible for the timeline
 // rendering
-void draw_process(Rectangle rect, const char *name, bool exited);
 Texture generate_timeline(ProcessList exec_stack);
 
 #ifdef GUI_IMPLEMENTATION
@@ -67,8 +57,8 @@ UiState init_state() {
 }
 
 // Draws the Policy Specific Params group box
-int draw_psp_group(UiState *state, Rectangle pos) {
-	int y_increment = state->padding;
+static int draw_psp_group(UiState *state, Rectangle pos) {
+	float y_increment = state->padding;
 	switch (state->selected_policy) {
 		case 1:
 			Rectangle label_rect = {
@@ -113,8 +103,8 @@ int draw_psp_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the Policy Selector group box
-int draw_ps_group(UiState *state, Rectangle pos) {
-	int y_increment = state->padding;
+static int draw_ps_group(UiState *state, Rectangle pos) {
+	float y_increment = state->padding;
 	Rectangle label_rect = {
 		pos.x + state->padding,
 		pos.y + y_increment,
@@ -137,7 +127,7 @@ int draw_ps_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the timeline in a scrollable panel
-int draw_timeline_group(UiState *state, Rectangle pos) {
+static int draw_timeline_group(UiState *state, Rectangle pos) {
 	const float header_height = RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT + 2;
 	Rectangle scroll_rect = {
 		pos.x,
@@ -165,8 +155,8 @@ int draw_timeline_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the stats for generated timeline (avg. rotation time, etc...)
-int draw_stats_group(UiState *state, Rectangle pos) {
-	int y_increment = state->padding;
+static int draw_stats_group(UiState *state, Rectangle pos) {
+	float y_increment = state->padding;
 	Rectangle rot_rect = {
 		pos.x + state->padding,
 		pos.y + y_increment,
@@ -181,8 +171,8 @@ int draw_stats_group(UiState *state, Rectangle pos) {
 }
 
 // Draws the generate and close buttons
-int draw_buttons(UiState *state, Rectangle pos) {
-	int x_increment = state->padding;
+static int draw_buttons(UiState *state, Rectangle pos) {
+	float x_increment = state->padding;
 	Rectangle close_rect = {
 		pos.x + x_increment,
 		pos.y + state->padding,
@@ -204,9 +194,9 @@ int draw_buttons(UiState *state, Rectangle pos) {
 	return 0;
 }
 
-int draw_file_group(UiState *state, Rectangle pos) {
-	int y_increment = state->padding;
-	int x_increment = state->padding;
+static int draw_file_group(UiState *state, Rectangle pos) {
+	float y_increment = state->padding;
+	float x_increment = state->padding;
 	const char *button_text = "Select File";
 	float button_width = fmax(
 		MIN_SIZE * 5,
@@ -247,7 +237,7 @@ int draw_file_group(UiState *state, Rectangle pos) {
 
 // Draws the main window
 int draw_main_window(UiState *state, Rectangle pos) {
-	int y_increment = state->padding;
+	float y_increment = state->padding;
 
 	Rectangle file_group_rect = {
 		pos.x + state->padding,
@@ -288,7 +278,7 @@ int draw_main_window(UiState *state, Rectangle pos) {
 
 // Draws the results window
 int draw_sub_window(UiState *state, Rectangle pos) {
-	int y_increment = state->padding;
+	float y_increment = state->padding;
 	Rectangle sub_anchor = {
 		pos.x,
 		pos.y + 32,
@@ -312,7 +302,7 @@ int draw_sub_window(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
-void draw_process(Rectangle rect, const char *name, bool exited) {
+static void draw_process(Rectangle rect, const char *name, bool exited) {
 	Color normal_color = GetColor(GuiGetStyle(DEFAULT, BASE_COLOR_NORMAL));
 	Color exit_color = GetColor(GuiGetStyle(DEFAULT, BASE_COLOR_PRESSED));
 	Color text_color = GetColor(GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL));
