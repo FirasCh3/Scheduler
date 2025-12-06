@@ -9,20 +9,29 @@
 
 // TODO: Add button for saving the texture as an image
 
-int main(void) {
+void Usage(char *prg) {
+	printf("USAGE: %s -i=config_file\n", prg);
+	exit(EXIT_FAILURE);
+}
+
+int main(int argc, char **argv) {
+	if (argc < 2) Usage(argv[0]);
+
   const char *policy_name = "preemptive_priority";
 
 	// GUI Related Variables
-	const char *accepted_filetypes = ".txt"; // Accepted Filetypes (semicolon separated)
+	Args args = parse_args(argc, argv);
+
 	int screen_width = 312 * 3;
 	int screen_height = 312 * 2;
-	char *file_path = "./config/processes.txt";
 	Rectangle main_anchor = {0, 0, screen_width, screen_height};
 	UiState state = init_state();
-  state.plist = parse_file(file_path);
+	if (args.file_path != NULL) {
+		strcpy(state.file_path, args.file_path);
+		state.plist = parse_file(state.file_path);
+	}
   state.exec_stack = scheduler(state.plist, policy_name);
 	state.padding = MIN_SIZE / 2;
-	strcpy(state.file_path, file_path);
 	state.file_dialog_state.windowBounds = main_anchor;
 
 	// GUI Initialization
@@ -39,15 +48,13 @@ int main(void) {
 		ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 		if (state.file_dialog_state.windowActive) GuiLock();
 		if (state.file_dialog_state.SelectFilePressed) {
-			if (IsFileExtension(state.file_dialog_state.fileNameText, accepted_filetypes)) {
-				strcpy(state.file_path, TextFormat(
-					"%s" PATH_SEPERATOR "%s",
-					state.file_dialog_state.dirPathText,
-					state.file_dialog_state.fileNameText
-				));
-				free(state.plist.list);
-				state.plist = parse_file(state.file_path);
-			}
+			strcpy(state.file_path, TextFormat(
+				"%s" PATH_SEPERATOR "%s",
+				state.file_dialog_state.dirPathText,
+				state.file_dialog_state.fileNameText
+			));
+			free(state.plist.list);
+			state.plist = parse_file(state.file_path);
 			state.file_dialog_state.SelectFilePressed = false;
 		}
 		draw_main_window(&state, main_anchor);
