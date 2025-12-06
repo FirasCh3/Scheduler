@@ -5,6 +5,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+Args parse_args(int argc, char **argv) {
+	Args args = {0};
+	for (int i = 1; i < argc; i++) {
+		if (strncmp(argv[i], "-i=", 3) == 0) {
+			char *start = strchrnul(argv[i], '=');
+			if (start != NULL) {
+				args.file_path = start + 1;
+			}
+		}
+	}
+	return args;
+}
+
 void remove_extra_whitespaces(char *str) {
   int i = 0;
   int j = 0;
