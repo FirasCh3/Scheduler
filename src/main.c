@@ -7,27 +7,23 @@
 #define GUI_IMPLEMENTATION
 #include <gui.h>
 
-int main(void) {
-  ProcessList plist;
-	char *file_path = "./config/processes.txt";
-  plist = parse_file(file_path);
-  for (int i = 0; i < plist.count; i++) {
-    printf("%s %d %d %d\n", plist.list[i].name, plist.list[i].arrival_time,
-           plist.list[i].burst_time, plist.list[i].priority);
-  }
+// TODO: Add button for saving the texture as an image
 
+int main(void) {
   const char *policy_name = "preemptive_priority";
 
-  ProcessList execution_stack = scheduler(plist, policy_name);
-  for (int i = 0; i < execution_stack.count; i++) {
-    printf("%s\n", execution_stack.list[i].name);
-  }
-
 	// GUI Related Variables
-	int screen_width = 312 * 2;
+	const char *accepted_filetypes = ".txt"; // Accepted Filetypes (semicolon separated)
+	int screen_width = 312 * 3;
 	int screen_height = 312 * 2;
-	UiState state = {.padding = MIN_SIZE / 2, .file_path = file_path};
+	char *file_path = "./config/processes.txt";
 	Rectangle main_anchor = {0, 0, screen_width, screen_height};
+	UiState state = init_state();
+  state.plist = parse_file(file_path);
+  state.exec_stack = scheduler(state.plist, policy_name);
+	state.padding = MIN_SIZE / 2;
+	strcpy(state.file_path, file_path);
+	state.file_dialog_state.windowBounds = main_anchor;
 
 	// GUI Initialization
 	InitWindow(screen_width, screen_height, "Scheduler");
@@ -41,22 +37,36 @@ int main(void) {
 
 		BeginDrawing();
 		ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
-
+		if (state.file_dialog_state.windowActive) GuiLock();
+		if (state.file_dialog_state.SelectFilePressed) {
+			if (IsFileExtension(state.file_dialog_state.fileNameText, accepted_filetypes)) {
+				strcpy(state.file_path, TextFormat(
+					"%s" PATH_SEPERATOR "%s",
+					state.file_dialog_state.dirPathText,
+					state.file_dialog_state.fileNameText
+				));
+				free(state.plist.list);
+				state.plist = parse_file(state.file_path);
+			}
+			state.file_dialog_state.SelectFilePressed = false;
+		}
 		draw_main_window(&state, main_anchor);
 		if (state.result) {
-			// TODO: Add button for saving the texture as an image
 			if (!state.generated) {
-				state.timeline = generate_timeline(execution_stack);
+				state.timeline = generate_timeline(state.exec_stack);
 				state.generated = true;
 			}
 			draw_sub_window(&state, main_anchor);
+
 		}
+		GuiUnlock();
+		GuiWindowFileDialog(&(state.file_dialog_state));
 		EndDrawing();
 	}
 
 	// GUI Cleanup
 	UnloadTexture(state.timeline);
 	CloseWindow();
-  free(plist.list);
+  free(state.plist.list);
   return 0;
 }
