@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "process.h"
 #include "scheduler.h"
+#include <stats.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,6 +68,8 @@ int main(int argc, char **argv) {
 						.quantum = state.quantum
 					}
 				);
+				state.avg_rot = calculate_avg_rot(state.exec_stack);
+				state.avg_wait = calculate_avg_wait(state.exec_stack);
 				state.timeline = generate_timeline(state.exec_stack);
 				state.generated = true;
 			}

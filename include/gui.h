@@ -31,6 +31,7 @@ typedef struct {
 	ProcessList plist;
 	ProcessList exec_stack;
 	float avg_rot;
+	float avg_wait;
 	Texture timeline;
 	char file_path[512]; // changed type to ensure max length
 } UiState;
@@ -232,7 +233,16 @@ static float draw_stats_group(UiState *state, Rectangle pos) {
 		MIN_SIZE,
 	};
 	y_increment += state->padding + rot_rect.height;
+
+	Rectangle wait_rect = {
+		pos.x + state->padding,
+		pos.y + y_increment,
+		pos.width - state->padding * 2,
+		MIN_SIZE,
+	};
+	y_increment += state->padding + rot_rect.height;
 	GuiLabel(rot_rect, TextFormat("Avg. Rotation time: %f", state->avg_rot));
+	GuiLabel(wait_rect, TextFormat("Avg. Wait time: %f", state->avg_wait));
 	if (pos.height == 0) pos.height = y_increment;
 	GuiGroupBox(pos, "Stats");
 	return pos.height;
