@@ -10,6 +10,6 @@ typedef struct {
 
 static int add_new_process(Level *Levels, int priority, int index);
 static void check_for_new_processes(Level *Levels, ProcessList *plist, int current_time);
-ProcessList schedule_multilevel(ProcessList* plist, int type);
+ProcessList schedule_multilevel(ProcessList* plist, int type, int quantum);
 
 #endif

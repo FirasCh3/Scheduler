@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <multilevel.h>
 
 char *supported_policies[] = {"FIFO", "Round-Robin", "Preemptive Priority", "Multilevel"};
 
