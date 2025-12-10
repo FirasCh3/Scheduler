@@ -1,15 +1,15 @@
-#ifndef STATIC_MULTILEVEL
-#define STATIC_MULTILEVEL
+#ifndef MULTILEVEL
+#define MULTILEVEL
 
 #include "process.h"
 
-struct Level {
+typedef struct {
 	int *queue; // The priority queue.
 	int queue_size; // To use in realloc when adding a new process to the queue.
-};
+} Level;
 
-static void add_new_processes(Level *Levels, ProcessList *plist, int index);
+static int add_new_process(Level *Levels, int priority, int index);
 static void check_for_new_processes(Level *Levels, ProcessList *plist, int current_time);
-ProcessList schedule_static_multilevel(ProcessList* plist);
+ProcessList schedule_multilevel(ProcessList* plist, int type);
 
 #endif

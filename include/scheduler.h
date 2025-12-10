@@ -4,6 +4,7 @@
 
 typedef struct {
 	int quantum;
+	int multilevel_type;	
 	// Add other policy specific params here
 } Params;
 

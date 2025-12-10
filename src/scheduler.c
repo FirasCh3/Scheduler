@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *supported_policies[] = {"FIFO", "Round-Robin", "Preemptive Priority"};
+char *supported_policies[] = {"FIFO", "Round-Robin", "Preemptive Priority", "Multilevel"};
 
 ProcessList scheduler(ProcessList plist, const char *policy_name, Params params) {
 	size_t n = sizeof(Process) * plist.count;
@@ -19,11 +19,14 @@ ProcessList scheduler(ProcessList plist, const char *policy_name, Params params)
   if (strcmp(policy_name, supported_policies[0]) == 0) {
 		return schedule_fifo(&temp);
   }
-	else if (strcmp(policy_name, supported_policies[1]) == 0) {
-		return schedule_rr(&temp, params.quantum);
-	}
-	else if (strcmp(policy_name, supported_policies[2]) == 0) {
-    return schedule_preemptive_priority(&temp);
+  else if (strcmp(policy_name, supported_policies[1]) == 0) {
+	return schedule_rr(&temp, params.quantum);
+  }
+  else if (strcmp(policy_name, supported_policies[2]) == 0) {
+    	return schedule_preemptive_priority(&temp);
+  }
+  else if(strcmp(policy_name, supported_policies[3]) == 0) {
+  	return schedule_multilevel(&temp, params.multilevel_type, params.quantum);
   }
   // Add other policies here
   else {
