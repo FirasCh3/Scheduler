@@ -11,6 +11,7 @@
 #define GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION
 #include <custom_file_dialog/gui_window_file_dialog.h>
 #include <scheduler.h>
+#include <dynamic_loader.h>
 
 // struct for managing ui related vars
 // and storing persistent data
@@ -185,9 +186,24 @@ static float draw_ps_group(UiState *state, Rectangle pos) {
 	};
 	y_increment += combobox_rect.height + state->padding;
 	GuiLabel(label_rect, "Choose policy");
+
+	char **loaded_policies;
+	int count = load_policies("policies", &loaded_policies);
+	int total = sp_length + count;
+
+	char **all_policies = malloc(sizeof(char*) * total);
+
+	for (int i = 0; i < sp_length; i++) {
+		all_policies[i] = supported_policies[i];
+	}
+
+	for (int i = 0; i < count; i++) {
+    	all_policies[sp_length + i] = loaded_policies[i];
+	}
+
 	GuiComboBox(combobox_rect, TextJoin(
-		supported_policies,
-		sp_length,
+		all_policies,
+		total,
 		";"
 	), &(state->selected_policy));
 	if (pos.height == 0) pos.height = y_increment;
