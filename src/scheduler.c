@@ -19,10 +19,10 @@ char *supported_policies[] = {"FIFO", "Round-Robin", "Preemptive Priority", "Mul
   	memcpy(temp.list, plist.list, n);
 
   // For debugging   
-  //ProcessList result = schedule_multilevel(&temp, 1, 2); 
-  //for (int i = 0; i < result.count; i++) {
-  //      printf("%s|", result.list[i].name);	
-  //}
+  ProcessList result = schedule_multilevel(&temp, 1, 2); 
+  for (int i = 0; i < result.count; i++) {
+        printf("%s|", result.list[i].name);	
+  }
 
   if (strcmp(policy_name, supported_policies[0]) == 0) {
 		return schedule_fifo(&temp);
@@ -33,9 +33,9 @@ char *supported_policies[] = {"FIFO", "Round-Robin", "Preemptive Priority", "Mul
   else if (strcmp(policy_name, supported_policies[2]) == 0) {
     	return schedule_preemptive_priority(&temp);
   }
-  else if(strcmp(policy_name, supported_policies[3]) == 0) {	
-  	return schedule_multilevel(&temp, 2, 0); 
-  }
+  //else if(strcmp(policy_name, supported_policies[3]) == 0) {	
+  //	return schedule_multilevel(&temp, 2, 1); 
+  //}
   else {
     perror("Scheduler error: unknown policy");
     exit(EXIT_FAILURE);
