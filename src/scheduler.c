@@ -10,18 +10,19 @@
 
 char *supported_policies[] = {"FIFO", "Round-Robin", "Preemptive Priority", "Multilevel"};
 
-ProcessList scheduler(ProcessList plist, const char *policy_name, Params params) {
-	size_t n = sizeof(Process) * plist.count;
-	ProcessList temp = {
-		.list = malloc(n),
-		.count = plist.count,
-	};
-	memcpy(temp.list, plist.list, n);
-  
-  ProcessList result = schedule_multilevel(&temp, 1, 2); 
-  for (int i = 0; i < result.count; i++) {
-	printf("%s|", result.list[i].name);	
-  }
+  ProcessList scheduler(ProcessList plist, const char *policy_name, Params params) {
+  	size_t n = sizeof(Process) * plist.count;
+  	ProcessList temp = {
+  		.list = malloc(n),
+  		.count = plist.count,
+  	};
+  	memcpy(temp.list, plist.list, n);
+
+  // For debugging   
+  //ProcessList result = schedule_multilevel(&temp, 1, 2); 
+  //for (int i = 0; i < result.count; i++) {
+  //      printf("%s|", result.list[i].name);	
+  //}
 
   if (strcmp(policy_name, supported_policies[0]) == 0) {
 		return schedule_fifo(&temp);
@@ -32,13 +33,9 @@ ProcessList scheduler(ProcessList plist, const char *policy_name, Params params)
   else if (strcmp(policy_name, supported_policies[2]) == 0) {
     	return schedule_preemptive_priority(&temp);
   }
-  //else if(strcmp(policy_name, supported_policies[3]) == 0) {	
-  //	ProcessList result = schedule_multilevel(&temp, 2, 1); 
-  //      for (int i ; i < result.count; i++) {
-  //      	printf("|%s|", result.list[i]);	
-  //      }	
-  //}
-  // Add other policies here
+  else if(strcmp(policy_name, supported_policies[3]) == 0) {	
+  	return schedule_multilevel(&temp, 2, 0); 
+  }
   else {
     perror("Scheduler error: unknown policy");
     exit(EXIT_FAILURE);

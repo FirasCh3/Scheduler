@@ -4,8 +4,8 @@
 #include "process.h"
 
 typedef struct {
-	int *queue; // The priority queue.
-	int queue_size; // To use in realloc when adding a new process to the queue.
+	int *queue;
+	int queue_size;
 } Level;
 
 static int add_new_process(Level *Levels, int priority, int index);
