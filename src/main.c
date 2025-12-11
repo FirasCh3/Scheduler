@@ -60,21 +60,42 @@ int main(int argc, char **argv) {
 			if (!state.generated) {
 				if (state.exec_stack.list != NULL) {
 					free(state.exec_stack.list);
+					state.exec_stack.list = NULL;
 				}
-				state.exec_stack = scheduler(
+				if (state.selected_policy >= sp_length) {
+					snprintf(state.error_msg, sizeof(state.error_msg),
+							"Scheduler error: unknown policy");
+					state.avg_rot = 0;
+					state.avg_wait = 0;
+					state.timeline = (Texture2D){0};
+					state.generated = false;
+				} else {
+					state.error_msg[0] = '\0';
+					state.exec_stack = scheduler(
 					state.plist,
 					supported_policies[state.selected_policy],
 					(Params) {
 						.quantum = state.quantum
 					}
-				);
-				state.avg_rot = calculate_avg_rot(state.exec_stack);
-				state.avg_wait = calculate_avg_wait(state.exec_stack);
-				state.timeline = generate_timeline(state.exec_stack);
-				state.generated = true;
+					);
+					state.avg_rot = calculate_avg_rot(state.exec_stack);
+					state.avg_wait = calculate_avg_wait(state.exec_stack);
+					state.timeline = generate_timeline(state.exec_stack);
+					state.generated = true;
+				}
 			}
+			
 			draw_sub_window(&state, main_anchor);
-
+			if (state.error_msg[0] != '\0') {
+				DrawText(
+					state.error_msg,
+					20,
+					screen_height - 30,
+					20,
+					RED
+				);
+			}
+			
 		}
 		GuiUnlock();
 		GuiWindowFileDialog(&(state.file_dialog_state));

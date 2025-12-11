@@ -35,6 +35,7 @@ typedef struct {
 	float avg_wait;
 	Texture timeline;
 	char file_path[512]; // changed type to ensure max length
+	char error_msg[128];
 } UiState;
 
 // size used for relative values
@@ -59,6 +60,7 @@ UiState init_state() {
 	return (UiState) {
 		.file_dialog_state = InitGuiWindowFileDialog(GetWorkingDirectory()),
 		.list_selected = -1,
+		.error_msg[0] = '\0',
 	};
 }
 
