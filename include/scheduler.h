@@ -4,11 +4,11 @@
 
 typedef struct {
 	int quantum;
-	int multilevel_type;	
+	int aging;
 	// Add other policy specific params here
 } Params;
 
-#define sp_length 3
+#define sp_length 5
 extern char *supported_policies[];
 ProcessList scheduler(ProcessList plist, const char* policy_name, Params params);
 
