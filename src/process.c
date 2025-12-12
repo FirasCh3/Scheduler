@@ -11,6 +11,7 @@ void init_process(Process* p, const char* name, int arrival, int burst, int prio
     p->start_time = -1;
     p->finish_time = -1;
     p->in_queue = 0;
+    p->waiting_time = p->arrival_time;
 }
 
 int all_finished(ProcessList* plist) {

@@ -19,6 +19,7 @@ typedef struct {
     int start_time;
     int finish_time;
     int in_queue; // to avoid duplicates (rr)
+    int waiting_time;
 } Process;
 
 typedef struct {
