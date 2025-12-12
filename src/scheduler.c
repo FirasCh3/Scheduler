@@ -18,12 +18,6 @@ char *supported_policies[] = {"FIFO", "Round-Robin", "Preemptive Priority", "Mul
   	};
   	memcpy(temp.list, plist.list, n);
 
-  // For debugging   
-  //ProcessList result = schedule_multilevel(&temp, 1, 2); 
-  //for (int i = 0; i < result.count; i++) {
-  //      printf("%s|", result.list[i].name);	
-  //}
-
   if (strcmp(policy_name, supported_policies[0]) == 0) {
 		return schedule_fifo(&temp);
   }

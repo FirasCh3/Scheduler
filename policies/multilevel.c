@@ -7,7 +7,6 @@ const int MAX_NUM_OF_PRIORITIES = 10;
 int MAX_PRIORITY = -1;
 
 static void  add_new_process(Level *Levels, int priority, int index) {
-	// Update MAX_PRIORITY
 	if (priority > MAX_PRIORITY) {
 		MAX_PRIORITY = priority;
 	}
@@ -65,19 +64,6 @@ static void aging(Level* Levels, ProcessList *plist, int ct, int max) {
 	}	
 }
 
-//For Debugging
-//static void display_levels(Level *Levels, ProcessList *plist) {
-//	for (int i = 0; i < MAX_NUM_OF_PRIORITIES; i++) {
-//		if (Levels[i].queue_size != 0) {
-//			printf("\nPRIORITY %d\n", i);	
-//			int *q = Levels[i].queue;
-//			for (int k = 0; k < Levels[i].queue_size; k++) {
-//				printf("%s|", (&plist->list[q[k]])->name);
-//			}
-//		}
-//	}
-//}
-
 ProcessList schedule_multilevel(ProcessList *plist, Multilevel_type m_type,int max, int quantum) {
 	printf("AGING: %d ---- QUANTUM: %d\n", max, quantum);
 	int current_time = 0;
@@ -99,7 +85,6 @@ ProcessList schedule_multilevel(ProcessList *plist, Multilevel_type m_type,int m
 	Level* Levels; 
 	Levels = malloc(sizeof(Level) * MAX_NUM_OF_PRIORITIES);
 	for (int i = 0; i < MAX_NUM_OF_PRIORITIES; i++) {
-		// Sorry for the NULL in here - it could be better I know
 		Levels[i].queue = NULL;
 		Levels[i].queue_size = 0;
 	}	
@@ -155,11 +140,6 @@ ProcessList schedule_multilevel(ProcessList *plist, Multilevel_type m_type,int m
 		// I will work on the dynamic part later
 		
 		old_level = &(Levels[i]);
-
-		// For debugging	
-		//printf("\n---------------\n");
-		//display_levels(Levels, plist);
-		//printf("\n---------------\n");
 
 		// Update the execution_stack
 		if (current == NULL) {
