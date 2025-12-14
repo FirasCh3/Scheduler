@@ -6,6 +6,7 @@
 
 const char *skip_list[] = {
     "fifo.c",
+    "multilevel.c",
     "preemptive-priority.c",
     "rr_utils.c",
     "rr.c",
