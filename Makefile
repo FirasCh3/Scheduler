@@ -11,9 +11,10 @@ TARGET = bin/scheduler
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS) $(RAYLIB_TARGET)
+$(TARGET): $(OBJS) $(RAYLIB_TARGET) | bin
 	$(CC) $(OBJS) $(RAYLIB_TARGET) -o $(TARGET) $(CFLAGS)
-
+bin:
+	mkdir -p bin
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
