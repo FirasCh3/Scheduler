@@ -26,8 +26,9 @@ int main(int argc, char **argv) {
 	Rectangle main_anchor = {0, 0, screen_width, screen_height};
 	UiState state = init_state();
 	if (args.file_path != NULL) {
-		strcpy(state.file_path, args.file_path);
-		state.plist = parse_file(state.file_path);
+    strncpy(state.file_path, args.file_path, sizeof(state.file_path)-1);
+    state.file_path[sizeof(state.file_path)-1] = '\0';
+	state.plist = parse_file(state.file_path);
 	}
 	state.padding = MIN_SIZE / 2;
 	state.file_dialog_state.windowBounds = main_anchor;
