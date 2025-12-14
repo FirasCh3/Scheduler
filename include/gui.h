@@ -202,7 +202,7 @@ static float draw_psp_group(UiState *state, Rectangle pos) {
 				value2_rect,
 				NULL,
 				&(state->aging),
-				1,
+				5,
 				INT_MAX,
 				state->aging_edit
 			)) state->aging_edit = !state->aging_edit;

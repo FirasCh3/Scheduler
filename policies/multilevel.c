@@ -6,6 +6,18 @@
 const int MAX_NUM_OF_PRIORITIES = 10;
 int MAX_PRIORITY = -1;
 
+//static void display(Level* Levels, ProcessList *plist) {
+//	for (int i = 0; i < MAX_NUM_OF_PRIORITIES; i++) {
+//		if (Levels[i].queue_size != 0) {
+//			printf("\nPRIORITY %d\n", i);
+//			int *l = Levels[i].queue;
+//			for (int k = 0; k < Levels[i].queue_size; k++) {
+//				printf("%s|", plist->list[l[k]].name);
+//			}
+//		}
+//	}
+//}
+
 static void  add_new_process(Level *Levels, int priority, int index) {
 	if (priority > MAX_PRIORITY) {
 		MAX_PRIORITY = priority;
