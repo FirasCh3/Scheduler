@@ -75,7 +75,8 @@ int main(int argc, char **argv) {
 					state.plist,
 					supported_policies[state.selected_policy],
 					(Params) {
-						.quantum = state.quantum
+						.quantum = state.quantum,
+						.aging = state.aging
 					}
 					);
 					state.avg_rot = calculate_avg_rot(state.exec_stack);

@@ -23,6 +23,7 @@ typedef struct {
 	float padding;
 	int quantum;
 	bool quantum_edit;
+	bool aging_edit;
 	Vector2 panel_scroll;
 	int scroll_index;
 	int list_selected;
@@ -36,6 +37,7 @@ typedef struct {
 	Texture timeline;
 	char file_path[512]; // changed type to ensure max length
 	char error_msg[128];
+	int aging;
 } UiState;
 
 // size used for relative values
@@ -128,6 +130,7 @@ static float draw_pv_group(UiState *state, Rectangle pos) {
 static float draw_psp_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	switch (state->selected_policy) {
+		case 3:
 		case 1:
 			Rectangle label_rect = {
 				pos.x + state->padding,
@@ -148,10 +151,62 @@ static float draw_psp_group(UiState *state, Rectangle pos) {
 				value_rect,
 				NULL,
 				&(state->quantum),
-				0,
+				1,
 				INT_MAX,
 				state->quantum_edit
 			)) state->quantum_edit = !state->quantum_edit;
+			break;
+		case 4:
+			Rectangle label1_rect = {
+				pos.x + state->padding,
+				pos.y + y_increment,
+				pos.width - state->padding * 2,
+				MIN_SIZE,
+			};
+			y_increment += label1_rect.height + state->padding;
+			Rectangle value1_rect = {
+				pos.x + state->padding,
+				pos.y + y_increment,
+				pos.width - state->padding * 2,
+				MIN_SIZE,
+			};
+			y_increment += value1_rect.height + state->padding;
+
+			Rectangle label2_rect = {
+				pos.x + state->padding,
+				pos.y + y_increment,
+				pos.width - state->padding * 2,
+				MIN_SIZE,
+			};
+			y_increment += label2_rect.height + state->padding;
+			Rectangle value2_rect = {
+				pos.x + state->padding,
+				pos.y + y_increment,
+				pos.width - state->padding * 2,
+				MIN_SIZE,
+			};
+			y_increment += value2_rect.height + state->padding;
+
+			GuiLabel(label1_rect, "Quantum");
+			if (GuiValueBox(
+				value1_rect,
+				NULL,
+				&(state->quantum),
+				1,
+				INT_MAX,
+				state->quantum_edit
+			)) state->quantum_edit = !state->quantum_edit;
+			
+			GuiLabel(label2_rect, "Aging");
+			if (GuiValueBox(
+				value2_rect,
+				NULL,
+				&(state->aging),
+				1,
+				INT_MAX,
+				state->aging_edit
+			)) state->aging_edit = !state->aging_edit;
+
 			break;
 		default:
 			// Draws empty space if there is no options to render
