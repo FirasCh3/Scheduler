@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-const int MAX_NUM_OF_PRIORITIES = 10;
+const int MAX_NUM_OF_PRIORITIES = 50;
 int MAX_PRIORITY = -1;
 
 //static void display(Level* Levels, ProcessList *plist) {
