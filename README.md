@@ -12,7 +12,7 @@ $ git clone --recurse-submodules git@github.com:FirasCh3/Scheduler.git
 
 After having cloned the reop successfully, all you need to do is run
 ```console
-$ make -j$(nproc)
+$ make
 ```
 This will build the executable that can be found in `bin/`.
 
@@ -43,7 +43,7 @@ P3 1 2 30
 
 This file has to be passed as an argument when running the program. It can later be changed in the GUI
 ```
-USAGE: scheduler -i=config_file
+USAGE: ./bin/scheduler -i=config/processes.txt
 ```
 
 ## License
