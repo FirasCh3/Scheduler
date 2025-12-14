@@ -16,7 +16,7 @@ $ make
 ```
 This will build the executable that can be found in `bin/`.
 
-The leftover files can be removed using
+The leftover files can later be removed using
 ```console
 $ make clean
 ```
@@ -42,8 +42,10 @@ P3 1 2 30
 ```
 
 This file has to be passed as an argument when running the program. It can later be changed in the GUI
+
+### Usage:
 ```
-USAGE: ./bin/scheduler -i=config/processes.txt
+./bin/scheduler -i=config/processes.txt
 ```
 
 ## License
