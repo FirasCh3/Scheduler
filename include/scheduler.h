@@ -5,7 +5,6 @@
 typedef struct {
 	int quantum;
 	int aging;
-	// Add other policy specific params here
 } Params;
 
 #define sp_length 5

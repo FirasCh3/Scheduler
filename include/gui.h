@@ -13,8 +13,6 @@
 #include <scheduler.h>
 #include <dynamic_loader.h>
 
-// struct for managing ui related vars
-// and storing persistent data
 typedef struct {
 	bool quit;
 	bool result;
@@ -35,25 +33,19 @@ typedef struct {
 	float avg_rot;
 	float avg_wait;
 	Texture timeline;
-	char file_path[512]; // changed type to ensure max length
+	char file_path[512];
 	char error_msg[128];
 	int aging;
 } UiState;
 
-// size used for relative values
 #define MIN_SIZE 24
 #define FONT_SIZE 16
 
 UiState init_state();
 
-// These functions render each of the components of the UI.
-// Each of the functions return the height of the component to use in other
-// components
 float draw_main_window(UiState *state, Rectangle pos);
 float draw_sub_window(UiState *state, Rectangle pos);
 
-// This function is responsible for the timeline
-// rendering
 Texture generate_timeline(ProcessList exec_stack);
 
 #ifdef GUI_IMPLEMENTATION
@@ -66,9 +58,7 @@ UiState init_state() {
 	};
 }
 
-// Draws the Policy Viewer group box
 static float draw_pv_group(UiState *state, Rectangle pos) {
-	// Construct semicolon separated string of names
 	char *elems;
 	for (int i=0; i < state->plist.count; i++) {
 		if (i > 0) elems = TextFormat("%s;%s", elems, state->plist.list[i].name);
@@ -126,7 +116,6 @@ static float draw_pv_group(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
-// Draws the Policy Specific Params group box
 static float draw_psp_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	switch (state->selected_policy) {
@@ -225,7 +214,6 @@ static float draw_psp_group(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
-// Draws the Policy Selector group box
 static float draw_ps_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	Rectangle label_rect = {
@@ -268,7 +256,6 @@ static float draw_ps_group(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
-// Draws the timeline in a scrollable panel
 static float draw_timeline_group(UiState *state, Rectangle pos) {
 	const float header_height = RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT + 2;
 	Rectangle scroll_rect = {
@@ -283,8 +270,7 @@ static float draw_timeline_group(UiState *state, Rectangle pos) {
 		state->timeline.height,
 	}, &(state->panel_scroll), &(state->view_rect));
 	BeginScissorMode(state->view_rect.x, state->view_rect.y, state->view_rect.width, state->view_rect.height);
-	// Texture is y-flipped since Texture mode y-axis
-	// is flipped compared to the usual Drawing mode
+	
 	DrawTexturePro(state->timeline, (Rectangle) {
 			-state->panel_scroll.x,
 			-state->panel_scroll.y,
@@ -296,7 +282,6 @@ static float draw_timeline_group(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
-// Draws the stats for generated timeline (avg. rotation time, etc...)
 static float draw_stats_group(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	Rectangle rot_rect = {
@@ -321,7 +306,6 @@ static float draw_stats_group(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
-// Draws the generate and close buttons
 static float draw_buttons(UiState *state, Rectangle pos) {
 	float x_increment = state->padding;
 	Rectangle close_rect = {
@@ -386,7 +370,6 @@ static float draw_file_group(UiState *state, Rectangle pos) {
 	return y_increment;
 }
 
-// Draws the main window
 float draw_main_window(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 
@@ -435,7 +418,6 @@ float draw_main_window(UiState *state, Rectangle pos) {
 	return pos.height;
 }
 
-// Draws the results window
 float draw_sub_window(UiState *state, Rectangle pos) {
 	float y_increment = state->padding;
 	Rectangle sub_anchor = {
@@ -470,14 +452,12 @@ static void draw_process(Rectangle rect, const char *name, bool exited) {
 	GuiDrawText(name, rect, TEXT_ALIGN_CENTER, text_color);
 }
 
-// This function will generate a texture of the gantt diagram
 Texture generate_timeline(ProcessList exec_stack) {
 	const int prev_color = GuiGetStyle(DEFAULT, LINE_COLOR);
 	const int text_color = GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL);
 	const int bg_color = GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL);
 	GuiSetStyle(DEFAULT, LINE_COLOR, text_color);
 
-	// Calculate texture dimensions
 	const float block_size = MIN_SIZE * 2;
 	const int padding = MIN_SIZE;
 	const float width = exec_stack.count * block_size + padding * 2;
@@ -507,5 +487,5 @@ Texture generate_timeline(ProcessList exec_stack) {
 	return timeline.texture;
 }
 
-#endif // GUI_IMPLEMENTATION
-#endif // _GUI_H
+#endif
+#endif

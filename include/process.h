@@ -18,7 +18,7 @@ typedef struct {
     ProcessState state;
     int start_time;
     int finish_time;
-    int in_queue; // to avoid duplicates (rr)
+    int in_queue;
     int waiting_time;
 } Process;
 

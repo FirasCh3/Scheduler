@@ -3,7 +3,6 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-// CLI args
 typedef struct {
 	char *file_path;
 } Args;

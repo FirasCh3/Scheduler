@@ -8,7 +8,6 @@
 #define GUI_IMPLEMENTATION
 #include <gui.h>
 
-// TODO: Add button for saving the texture as an image
 
 void Usage(char *prg) {
 	printf("USAGE: %s -i=config_file\n", prg);
@@ -18,7 +17,6 @@ void Usage(char *prg) {
 int main(int argc, char **argv) {
 	if (argc < 2) Usage(argv[0]);
 
-	// GUI Related Variables
 	Args args = parse_args(argc, argv);
 
 	int screen_width = 312 * 3;
@@ -33,7 +31,6 @@ int main(int argc, char **argv) {
 	state.padding = MIN_SIZE / 2;
 	state.file_dialog_state.windowBounds = main_anchor;
 
-	// GUI Initialization
 	InitWindow(screen_width, screen_height, "Scheduler");
 	SetTargetFPS(60);
 	GuiLoadStyleGenesis();
@@ -104,7 +101,6 @@ int main(int argc, char **argv) {
 		EndDrawing();
 	}
 
-	// GUI Cleanup
 	UnloadTexture(state.timeline);
 	CloseWindow();
   free(state.plist.list);
