@@ -8,7 +8,7 @@ float calculate_avg_rot(ProcessList exec_stack) {
 	for (int i = exec_stack.count - 1; i >= 0; i--) {
 		Process p = exec_stack.list[i];
 		if (p.state == FINISHED && strcmp(p.name, "idle") != 0) {
-			res += (float) (p.finish_time - p.start_time);
+			res += (float) (p.finish_time - p.arrival_time);
 			count++;
 		}
 	}
